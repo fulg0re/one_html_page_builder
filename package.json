@@ -1,0 +1,19 @@
+{
+  "name": "one_html_page_builder",
+  "version": "1.0.0",
+  "description": "Build one HTML page from parts",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fulg0re/one_html_page_builder.git"
+  },
+  "author": "Pavlo Denys",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/fulg0re/one_html_page_builder/issues"
+  },
+  "homepage": "https://github.com/fulg0re/one_html_page_builder#readme"
+}
