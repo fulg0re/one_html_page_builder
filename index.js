@@ -1,11 +1,31 @@
-const { readFile, writeFile } = require('fs');
+const {
+  readFile,
+  writeFile,
+  createReadStream } = require('fs');
 const { promisify } = require('util');
+const { createInterface } = require('readline');
 const config = require('./config');
+const outstream = new (require('stream'))();
 
-const readFileP = promisify(readFile);
 const writeFileP = promisify(writeFile);
 
-const defaultReadFile = async (filePath) => await readFileP(filePath, "utf8");
+const readFileLineByLine = (filePath) => new Promise((res, rej) =>{
+  const instream = createReadStream(filePath);
+  const rl = createInterface(instream, outstream);
+  let result = [];
+
+  console.log(`reading file (${filePath})...`);
+
+  rl.on('line', (line) => {
+    result.push(line.trim());
+  });
+  
+  rl.on('close', function (line) {
+    res(result);
+    console.log(`done reading file (${filePath})...`);
+  });
+});
+
 const defaultWriteFile = async (filePath, content) => await writeFileP(filePath, content);
 
 const defaultFilter = (word) => 
@@ -29,14 +49,14 @@ const foreachLine = async (line) => {
 const buildFile = async ({ filePathIn, filePathOut = false, filter, foreachLine }) => {
   try {
     let result = [];
-    let fileContent = await defaultReadFile(filePathIn);
-    let splitedFileContent = fileContent.split('\n').filter(filter);
+    let fileContent = await readFileLineByLine(filePathIn);
+    let splitedFileContent = fileContent.filter(filter);
 
     for (let index = 0; index < splitedFileContent.length; index++) {
       result.push(await foreachLine(splitedFileContent[index]));
     }
 
-    let newFileContent = result.join('');
+    let newFileContent = result.join((config.minifyOutputFile) ? '' : '\n');
 
     /** if filePathOut is not empty, write all content into this file */
     if (filePathOut) {

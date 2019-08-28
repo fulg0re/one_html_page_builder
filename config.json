@@ -1,4 +1,5 @@
 {
-	"inputFilePathWithName": "input/index.html",
-	"outputFilePathWithName": "output/index.html"
+  "inputFilePathWithName": "../indexInput.html",
+  "outputFilePathWithName": "../indexOutput.html",
+  "minifyOutputFile": false
 }
