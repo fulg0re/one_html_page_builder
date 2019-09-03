@@ -70,4 +70,51 @@
       //TODO
     }
   }
+
+  class Collection {
+    // name   - String
+    // fields - [String]
+    constructor(name, fields) {
+      this.name = name;
+      this.fields = fields;
+    }
+
+    localStorageGet() {
+      return JSON.parse(localStorage.getItem(this.name));
+    }
+
+    localStorageSet(data) {
+      return localStorage.setItem(this.name, JSON.stringify(data));
+    }
+
+    // TODO modify method so it can not save same data(users)
+    new(data, append = true) {
+      let newData = {};
+      for (let i = 0; i < this.fields.length; i++) {
+        newData[this.fields[i]] = data[this.fields[i]];
+      }
+
+      let existingData = [];
+      if (append) {
+        existingData = (this.localStorageGet(this.name) !== null) ? this.localStorageGet(this.name) : [];
+      }
+      existingData.push(newData);
+
+      this.localStorageSet(existingData);
+
+      return true;
+    }
+
+    get(key, value) {
+      let collection = this.localStorageGet();
+      let result = [];
+      for (let i = 0; i < collection.length; i++) {
+        if (collection[i][key] === value) {
+          result.push(collection[i]);
+        }
+      }
+
+      return (result.length > 0) ? result : false;
+    }
+  }
 </script>
