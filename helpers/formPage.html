@@ -97,24 +97,31 @@
       let existingData = [];
       if (append) {
         existingData = (this.localStorageGet(this.name) !== null) ? this.localStorageGet(this.name) : [];
+        existingData.push(newData);
+        this.localStorageSet(existingData);
+      } else {
+        this.localStorageSet(newData);
       }
-      existingData.push(newData);
 
-      this.localStorageSet(existingData);
 
       return true;
     }
 
-    get(key, value) {
+    get(key = null, value = null) {
       let collection = this.localStorageGet();
-      let result = [];
-      for (let i = 0; i < collection.length; i++) {
-        if (collection[i][key] === value) {
-          result.push(collection[i]);
-        }
-      }
 
-      return (result.length > 0) ? result : false;
+      if (key !== null && value !== null) {
+        let result = [];
+        for (let i = 0; i < collection.length; i++) {
+          if (collection[i][key] === value) {
+            result.push(collection[i]);
+          }
+        }
+
+        return (result.length > 0) ? result : false;
+      } else {
+        return collection;
+      }
     }
   }
 </script>
