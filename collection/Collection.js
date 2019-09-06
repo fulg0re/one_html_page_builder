@@ -8,14 +8,18 @@ class Collection {
     this.idCharacters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
   }
 
+  // localStorageGet :: () -> Object|[Object]
   localStorageGet() {
     return JSON.parse(localStorage.getItem(this.name));
   }
 
+  // localStorageSet :: Object -> Boolean
   localStorageSet(data) {
-    return localStorage.setItem(this.name, JSON.stringify(data));
+    localStorage.setItem(this.name, JSON.stringify(data));
+    return true;
   }
 
+  // generateId :: () -> String
   generateId() {
     let result = '';
     let charactersLength = this.idCharacters.length;
@@ -43,7 +47,7 @@ class Collection {
     }
   }
 
-  // TODO modify method so it can not save same data(users)
+  // add :: Object -> Boolean -> Boolean
   add(data, append = false) {
     let newData = {
       id: this.generateId()
@@ -63,10 +67,12 @@ class Collection {
     return true;
   }
 
+  // getAll :: () -> Object|[Object]
   getAll() {
     return this.localStorageGet();
   }
 
+  // getByKeyValue :: String -> Value -> Object
   getByKeyValue(key, value) {
     let collection = this.localStorageGet();
     let result = null;
@@ -80,6 +86,7 @@ class Collection {
     return result;
   }
 
+  // getByKeyValueArr :: String -> Value -> [Object]
   getByKeyValueArr(key, value) {
     let collection = this.localStorageGet();
 
@@ -93,10 +100,12 @@ class Collection {
     return result;
   }
 
+  // getById :: Value -> Object
   getById(id) {
     return this.getByKeyValue('id', id);
   }
 
+  // update :: TODO
   update(data) {
     let oldData = this.getAll();
 
@@ -105,10 +114,11 @@ class Collection {
     }
 
     for (let i = 0; i < this.fields.length; i++) {
-      
+
     }
   }
 
+  // updateById :: TODO
   updateById(id, data) {
     // let allData = this.getAll();
 
@@ -119,6 +129,7 @@ class Collection {
     
   }
 
+  // deleteById :: Value -> Boolean
   deleteById(id) {
     let oldData = this.getAll();
     let newData = [];
@@ -142,7 +153,9 @@ class Collection {
     return true;
   }
 
+  // deleteById :: () -> Boolean
   deleteAll() {
-    return localStorage.removeItem(this.name);
+    localStorage.removeItem(this.name);
+    return true;
   }
 }
