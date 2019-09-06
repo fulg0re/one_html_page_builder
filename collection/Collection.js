@@ -97,6 +97,28 @@ class Collection {
     return this.getByKeyValue('id', id);
   }
 
+  update(data) {
+    let oldData = this.getAll();
+
+    if (oldData === null) {
+      return false;
+    }
+
+    for (let i = 0; i < this.fields.length; i++) {
+      
+    }
+  }
+
+  updateById(id, data) {
+    // let allData = this.getAll();
+
+    // if (allData === null) {
+    //   return false;
+    // }
+
+    
+  }
+
   deleteById(id) {
     let oldData = this.getAll();
     let newData = [];
@@ -121,6 +143,6 @@ class Collection {
   }
 
   deleteAll() {
-
+    return localStorage.removeItem(this.name);
   }
 }

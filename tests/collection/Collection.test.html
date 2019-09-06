@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Page Title</title>
+</head>
+<body>
+
+  <script src="../../collection/Collection.js"></script>
+
+  <script>
+    const Coll = new Collection('testCollection', ['testField1', 'testField2', 'testField3']);
+    let testsTitle = '';
+    let newData;
+    let newData2;
+    let savedData;
+
+    function removeCreatedCollections() {
+      localStorage.removeItem('testCollection');
+      localStorage.removeItem('ids');
+      return;
+    }
+
+    function logTestResult(title, result) {
+      return console.log(`${result} - ${title}`);
+    }
+
+    function compareObjects(obj1, obj2, obj1NotRequiredKeys = []) {
+      let result = true;
+
+      for (let i = 0; i < obj1NotRequiredKeys.length; i++) {
+        delete obj1[obj1NotRequiredKeys[i]];
+      }
+
+      for (let key in obj1) {
+        if (obj1.hasOwnProperty(key)) {
+          if (obj1[key] !== obj2[key]) {
+            result = false;
+          }
+        }
+      }
+      return result;
+    };
+
+    // TEST #1 start
+    testsTitle = 'Test #1: function add() if saves new data...';
+    newData = {
+      'testField1': 'testValue1',
+      'testField2': 'testValue2',
+      'testField3': 'testValue3'
+    };
+    Coll.add(newData);
+    savedData = JSON.parse(localStorage.getItem('testCollection'));
+    if (savedData === null) {
+      logTestResult(testsTitle, 'failed');
+    } else {
+      logTestResult(testsTitle, 'passed');
+    }
+    
+    this.removeCreatedCollections();
+    // TEST #1 end
+
+    // TEST #2 start
+    testsTitle = 'Test #2: function add() if saved data is good...';
+    newData = {
+      'testField1': 'testValue1',
+      'testField2': 'testValue2',
+      'testField3': 'testValue3'
+    };
+
+    Coll.add(newData);
+    savedData = JSON.parse(localStorage.getItem('testCollection'));
+    if (savedData === null) {
+      logTestResult(testsTitle, 'failed');
+    } else if (this.compareObjects(savedData, newData, ['id'])) {
+      logTestResult(testsTitle, 'passed');
+    } else {
+      logTestResult(testsTitle, 'failed');
+    }
+
+    this.removeCreatedCollections();
+    // TEST #2 end
+
+    // TEST #3 start
+    testsTitle = 'Test #3: function getAll()...';
+    newData = {
+      'testField1': 'testValue1',
+      'testField2': 'testValue2',
+      'testField3': 'testValue3'
+    };
+    Coll.add(newData, true);
+    newData2 = {
+      'testField1': 'testValue4',
+      'testField2': 'testValue5',
+      'testField3': 'testValue6'
+    };
+    Coll.add(newData2, true);
+    savedData = Coll.getAll();
+    if (savedData === null) {
+      logTestResult(testsTitle, 'failed');
+    } else {
+      let result;
+      for (let i = 0; i < savedData.length; i++) {
+        if (this.compareObjects(savedData[i], newData, ['id']) || this.compareObjects(savedData[i], newData2, ['id'])) {
+          result = true;
+        } else {
+          result = false;
+        }
+      }
+
+      if (result) {
+        logTestResult(testsTitle, 'passed');
+      } else {
+        logTestResult(testsTitle, 'failed');
+      }
+    }
+
+    this.removeCreatedCollections();
+    // TEST #3 end
+
+    // TEST #4 start
+    testsTitle = 'Test #4: function getByKeyValue()...';
+    newData = {
+      'testField1': 'testValue1',
+      'testField2': 'testValue2',
+      'testField3': 'testValue3'
+    };
+    Coll.add(newData, true);
+    newData2 = {
+      'testField1': 'testValue4',
+      'testField2': 'testValue5',
+      'testField3': 'testValue6'
+    };
+    Coll.add(newData2, true);
+    savedData = Coll.getByKeyValue('testField2', 'testValue5');
+    if (savedData === null) {
+      logTestResult(testsTitle, 'failed');
+    } else if (this.compareObjects(savedData, newData2, ['id'])) {
+      logTestResult(testsTitle, 'passed');
+    } else {
+      logTestResult(testsTitle, 'failed');
+    }
+
+    this.removeCreatedCollections();
+    // TEST #4 end
+
+
+  </script>
+
+</body>
+</html>
