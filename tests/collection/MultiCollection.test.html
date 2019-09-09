@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Test "collection/MultiCollection.js"</title>
+</head>
+<body>
+  <a href="Collection.test.html">Collection.test.html</a>
+
+  <script src="../../collection/AbstractDBCollection.js"></script>
+  <script src="../../collection/MultiCollection.js"></script>
+
+  <script>
+    const Coll = new MultiCollection('testCollection', ['testField1', 'testField2', 'testField3']);
+    let testsTitle = '';
+    let newData;
+    let newData2;
+    let savedData;
+    let savedData2;
+
+    function removeCreatedCollections() {
+      localStorage.removeItem('testCollection');
+      localStorage.removeItem('ids');
+      return;
+    }
+
+    function logTestResult(title, result) {
+      return console.log(`${result} - ${title}`);
+    }
+
+    function compareObjects(obj1, obj2, obj1NotRequiredKeys = []) {
+      let result = true;
+
+      for (let i = 0; i < obj1NotRequiredKeys.length; i++) {
+        delete obj1[obj1NotRequiredKeys[i]];
+      }
+
+      for (let key in obj1) {
+        if (obj1.hasOwnProperty(key)) {
+          if (obj1[key] !== obj2[key]) {
+            result = false;
+          }
+        }
+      }
+      return result;
+    };
+
+    // TEST #1 start
+    testsTitle = 'Test #1: function add()...';
+    newData = [
+      {
+        'testField1': 'testValue1',
+        'testField2': 'testValue2',
+        'testField3': 'testValue3'
+      },
+      {
+        'testField1': 'testValue4',
+        'testField2': 'testValue5',
+        'testField3': 'testValue6'
+      }
+    ];
+    Coll.add(newData[0]);
+    Coll.add(newData[1]);
+    savedData = JSON.parse(localStorage.getItem('testCollection'));
+    if (savedData === null) {
+      logTestResult(testsTitle, 'failed');
+    } else if (
+      this.compareObjects(savedData[0], newData[0], ['id'])
+      && this.compareObjects(savedData[1], newData[1], ['id'])
+      ) {
+      logTestResult(testsTitle, 'passed');
+    } else {
+      logTestResult(testsTitle, 'failed');
+    }
+    
+    this.removeCreatedCollections();
+    // TEST #1 end
+
+    // TEST #2 start
+    testsTitle = 'Test #2: function getAll()...';
+    newData = [
+      {
+        'testField1': 'testValue1',
+        'testField2': 'testValue2',
+        'testField3': 'testValue3'
+      },
+      {
+        'testField1': 'testValue4',
+        'testField2': 'testValue5',
+        'testField3': 'testValue6'
+      }
+    ];
+    Coll.add(newData[0]);
+    Coll.add(newData[1]);
+    savedData = Coll.getAll();
+    if (savedData.length === 0) {
+      logTestResult(testsTitle, 'failed');
+    } else if (
+      this.compareObjects(savedData[0], newData[0], ['id'])
+      && this.compareObjects(savedData[1], newData[1], ['id'])
+      ) {
+      logTestResult(testsTitle, 'passed');
+    } else {
+      logTestResult(testsTitle, 'failed');
+    }
+
+    this.removeCreatedCollections();
+    // TEST #2 end
+
+    // TEST #3 start
+    testsTitle = 'Test #3: function getByKeyValue()...';
+    newData = [
+      {
+        'testField1': 'testValue1',
+        'testField2': 'testValue2',
+        'testField3': 'testValue3'
+      },
+      {
+        'testField1': 'testValue4',
+        'testField2': 'testValue5',
+        'testField3': 'testValue6'
+      }
+    ];
+    Coll.add(newData[0]);
+    Coll.add(newData[1]);
+    savedData = Coll.getByKeyValue('testField2', 'testValue5');
+    if (savedData === null) {
+      logTestResult(testsTitle, 'failed');
+    } else if (this.compareObjects(savedData, newData[1], ['id'])) {
+      logTestResult(testsTitle, 'passed');
+    } else {
+      logTestResult(testsTitle, 'failed');
+    }
+
+    this.removeCreatedCollections();
+    // TEST #3 end
+
+    // TEST #4 start
+    testsTitle = 'Test #4: function getAllByKeyValue()...';
+    newData = [
+      {
+        'testField1': 'testValue1',
+        'testField2': 'testValue2',
+        'testField3': 'testValue3'
+      },
+      {
+        'testField1': 'testValue4',
+        'testField2': 'testValue5',
+        'testField3': 'testValue6'
+      },
+      {
+        'testField1': 'testValue4',
+        'testField2': 'testValue5',
+        'testField3': 'testValue6'
+      }
+    ];
+    Coll.add(newData[0]);
+    Coll.add(newData[1]);
+    Coll.add(newData[2]);
+    savedData = Coll.getAllByKeyValue('testField2', 'testValue5');
+    if (savedData === null) {
+      logTestResult(testsTitle, 'failed');
+    } else if (
+      this.compareObjects(savedData[0], newData[1], ['id'])
+      && this.compareObjects(savedData[1], newData[2], ['id'])
+      ) {
+      logTestResult(testsTitle, 'passed');
+    } else {
+      logTestResult(testsTitle, 'failed');
+    }
+
+    this.removeCreatedCollections();
+    // TEST #4 end
+
+    // TEST #5 start
+    testsTitle = 'Test #5: function getById()...';
+    newData = [
+      {
+        'testField1': 'testValue1',
+        'testField2': 'testValue2',
+        'testField3': 'testValue3'
+      },
+      {
+        'testField1': 'testValue4',
+        'testField2': 'testValue5',
+        'testField3': 'testValue6'
+      },
+      {
+        'testField1': 'testValue7',
+        'testField2': 'testValue8',
+        'testField3': 'testValue9'
+      }
+    ];
+    Coll.add(newData[0]);
+    Coll.add(newData[1]);
+    Coll.add(newData[2]);
+    let getByKeyValueData = Coll.getByKeyValue('testField2', 'testValue5');
+    savedData = Coll.getById(getByKeyValueData.id);
+    if (savedData === null) {
+      logTestResult(testsTitle, 'failed');
+    } else if (this.compareObjects(savedData, newData[1], ['id'])) {
+      logTestResult(testsTitle, 'passed');
+    } else {
+      logTestResult(testsTitle, 'failed');
+    }
+
+    this.removeCreatedCollections();
+    // TEST #5 end
+
+    // TEST #6 start
+    testsTitle = 'Test #6: function updateById()...';
+    newData = [
+      {
+        'testField1': 'testValue1',
+        'testField2': 'testValue2',
+        'testField3': 'testValue3'
+      },
+      {
+        'testField1': 'testValue4',
+        'testField2': 'testValue5',
+        'testField3': 'testValue6'
+      },
+      {
+        'testField1': 'testValue7',
+        'testField2': 'testValue8',
+        'testField3': 'testValue9'
+      }
+    ];
+    let updateData = {
+      'testField1': 'testValue1000',
+      'testField2': 'testValue2000',
+      'testField3': 'testValue3000'
+    };
+    Coll.add(newData[0]);
+    Coll.add(newData[1]);
+    Coll.add(newData[2]);
+    getByKeyValueData = Coll.getByKeyValue('testField2', 'testValue5');
+    Coll.updateById(getByKeyValueData.id, updateData);
+    savedData = Coll.getAll();
+    if (savedData === null) {
+      logTestResult(testsTitle, 'failed');
+    } else if (
+      this.compareObjects(savedData[0], newData[0], ['id'])
+      && this.compareObjects(savedData[1], updateData, ['id'])
+      && this.compareObjects(savedData[2], newData[2], ['id'])
+      ) {
+      logTestResult(testsTitle, 'passed');
+    } else {
+      logTestResult(testsTitle, 'failed');
+    }
+
+    this.removeCreatedCollections();
+    // TEST #6 end
+
+    // TEST #7 start
+    testsTitle = 'Test #7: function deleteById()...';
+    newData = [
+      {
+        'testField1': 'testValue1',
+        'testField2': 'testValue2',
+        'testField3': 'testValue3'
+      },
+      {
+        'testField1': 'testValue4',
+        'testField2': 'testValue5',
+        'testField3': 'testValue6'
+      },
+      {
+        'testField1': 'testValue7',
+        'testField2': 'testValue8',
+        'testField3': 'testValue9'
+      }
+    ];
+    Coll.add(newData[0]);
+    Coll.add(newData[1]);
+    Coll.add(newData[2]);
+    getByKeyValueData = Coll.getByKeyValue('testField2', 'testValue5');
+    Coll.deleteById(getByKeyValueData.id);
+    savedData = Coll.getAll();
+    if (savedData === null) {
+      logTestResult(testsTitle, 'failed');
+    } else if (
+      this.compareObjects(savedData[0], newData[0], ['id'])
+      && this.compareObjects(savedData[1], newData[2], ['id'])
+      ) {
+      logTestResult(testsTitle, 'passed');
+    } else {
+      logTestResult(testsTitle, 'failed');
+    }
+
+    this.removeCreatedCollections();
+    // TEST #7 end
+
+    // TEST #8 start
+    testsTitle = 'Test #8: function deleteAll()...';
+    newData = [
+      {
+        'testField1': 'testValue1',
+        'testField2': 'testValue2',
+        'testField3': 'testValue3'
+      },
+      {
+        'testField1': 'testValue4',
+        'testField2': 'testValue5',
+        'testField3': 'testValue6'
+      },
+      {
+        'testField1': 'testValue7',
+        'testField2': 'testValue8',
+        'testField3': 'testValue9'
+      }
+    ];
+    Coll.add(newData[0]);
+    Coll.add(newData[1]);
+    Coll.add(newData[2]);
+    Coll.deleteAll();
+    savedData = Coll.getAll();
+    if (savedData.length === 0) {
+      logTestResult(testsTitle, 'passed');
+    } else {
+      logTestResult(testsTitle, 'failed');
+    }
+
+    this.removeCreatedCollections();
+    // TEST #8 end
+
+
+  </script>
+
+</body>
+</html>

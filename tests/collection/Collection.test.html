@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Page Title</title>
+  <title>Test "collection/Collection.js"</title>
 </head>
 <body>
+  <a href="MultiCollection.test.html">MultiCollection.test.html</a>
 
+  <script src="../../collection/AbstractDBCollection.js"></script>
   <script src="../../collection/Collection.js"></script>
 
   <script>
@@ -13,6 +15,7 @@
     let newData;
     let newData2;
     let savedData;
+    let savedData2;
 
     function removeCreatedCollections() {
       localStorage.removeItem('testCollection');
@@ -42,7 +45,7 @@
     };
 
     // TEST #1 start
-    testsTitle = 'Test #1: function add() if saves new data...';
+    testsTitle = 'Test #1: function add()...';
     newData = {
       'testField1': 'testValue1',
       'testField2': 'testValue2',
@@ -52,23 +55,24 @@
     savedData = JSON.parse(localStorage.getItem('testCollection'));
     if (savedData === null) {
       logTestResult(testsTitle, 'failed');
-    } else {
+    } else if (this.compareObjects(savedData, newData, ['id'])) {
       logTestResult(testsTitle, 'passed');
+    } else {
+      logTestResult(testsTitle, 'failed');
     }
     
     this.removeCreatedCollections();
     // TEST #1 end
 
     // TEST #2 start
-    testsTitle = 'Test #2: function add() if saved data is good...';
+    testsTitle = 'Test #2: function get()...';
     newData = {
       'testField1': 'testValue1',
       'testField2': 'testValue2',
       'testField3': 'testValue3'
     };
-
     Coll.add(newData);
-    savedData = JSON.parse(localStorage.getItem('testCollection'));
+    savedData = Coll.get();
     if (savedData === null) {
       logTestResult(testsTitle, 'failed');
     } else if (this.compareObjects(savedData, newData, ['id'])) {
@@ -81,60 +85,42 @@
     // TEST #2 end
 
     // TEST #3 start
-    testsTitle = 'Test #3: function getAll()...';
+    testsTitle = 'Test #3: function update()...';
     newData = {
       'testField1': 'testValue1',
       'testField2': 'testValue2',
       'testField3': 'testValue3'
     };
-    Coll.add(newData, true);
-    newData2 = {
+    updateData = {
       'testField1': 'testValue4',
       'testField2': 'testValue5',
       'testField3': 'testValue6'
     };
-    Coll.add(newData2, true);
-    savedData = Coll.getAll();
+    Coll.add(newData);
+    Coll.update(updateData);
+    savedData = JSON.parse(localStorage.getItem('testCollection'));
     if (savedData === null) {
       logTestResult(testsTitle, 'failed');
+    } else if (this.compareObjects(savedData, updateData, ['id'])) {
+      logTestResult(testsTitle, 'passed');
     } else {
-      let result;
-      for (let i = 0; i < savedData.length; i++) {
-        if (this.compareObjects(savedData[i], newData, ['id']) || this.compareObjects(savedData[i], newData2, ['id'])) {
-          result = true;
-        } else {
-          result = false;
-        }
-      }
-
-      if (result) {
-        logTestResult(testsTitle, 'passed');
-      } else {
-        logTestResult(testsTitle, 'failed');
-      }
+      logTestResult(testsTitle, 'failed');
     }
 
     this.removeCreatedCollections();
     // TEST #3 end
 
     // TEST #4 start
-    testsTitle = 'Test #4: function getByKeyValue()...';
+    testsTitle = 'Test #4: function delete()...';
     newData = {
       'testField1': 'testValue1',
       'testField2': 'testValue2',
       'testField3': 'testValue3'
     };
-    Coll.add(newData, true);
-    newData2 = {
-      'testField1': 'testValue4',
-      'testField2': 'testValue5',
-      'testField3': 'testValue6'
-    };
-    Coll.add(newData2, true);
-    savedData = Coll.getByKeyValue('testField2', 'testValue5');
+    Coll.add(newData);
+    Coll.delete();
+    savedData = JSON.parse(localStorage.getItem('testCollection'));
     if (savedData === null) {
-      logTestResult(testsTitle, 'failed');
-    } else if (this.compareObjects(savedData, newData2, ['id'])) {
       logTestResult(testsTitle, 'passed');
     } else {
       logTestResult(testsTitle, 'failed');
