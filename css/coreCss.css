@@ -1,0 +1,11 @@
+.coreHidenForm {
+  display: none;
+}
+
+.serviseComplete {
+  color: gray;
+}
+
+.serviseNotComplete {
+  color: black;
+}
